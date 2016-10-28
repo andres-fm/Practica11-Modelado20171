@@ -41,28 +41,6 @@ class MyWindow(QtGui.QMainWindow) :
 	def ping(self):
 		return "¡Pong!"
 
-	"""def nueva_vibora(self):
-		posicion_correcta = False
-		while not posicion_correcta:
-			nueva_vibora = Vibora()
-			x = 0#randint(0,int(self.ui.table_board.rowCount()-4))
-			y = 0#randint(0,int(self.ui.table_board.columnCount()))
-			nuevo_cuerpo = [(x,y),(x+1,y),(x+2,y),(x+3,y)]
-			valido = True
-			for c in nuevo_cuerpo:
-				if c in self.celdas_ocupadas:
-					valido = False
-					break
-			if valido:
-				posicion_correcta = True
-				nueva_vibora.identificador = self.nuevo_id.__next__()
-				for a in cuerpo:
-					self.celdas_ocupadas[a] = nueva_vibora.identificador
-				nueva_vibora.cuerpo = nuevo_cuerpo				
-				#(r, g, b) = self.color_aleatorio()
-				#nueva_vibora.color = (r, g, b)
-				return nueva_vibora"""
-
 	def yo_juego(self):
 		posicion_correcta = False
 		while not posicion_correcta:
@@ -137,7 +115,6 @@ class MyWindow(QtGui.QMainWindow) :
 	def handle_boton_iniciar(self) :
 		if not self.first_click  :
 			return
-		#self.vibora = Vibora()
 		self.colorear_vibora("0",100,149,237)
 		self.en_juego = True
 		self.button_terminar_juego = QtGui.QPushButton('Terminar juego', self)
@@ -200,8 +177,17 @@ class MyWindow(QtGui.QMainWindow) :
 					self.mueve_serpiente(idn)
 			except:
 				pass
+
+	def mata_serpiente(self, idn):
+		self.viboras[idn].viva = False
+		self.borrar_vibora(idn)
+		del self.viboras[idn]
+
 	def mueve_serpiente(self, idn) :
 		if idn not in self.viboras:
+			return
+		if not self.viboras[str(idn)].viva:
+			self.mata_serpiente(str(idn))
 			return
 		(cola_x, cola_y) = self.viboras[str(idn)].cola
 		self.descolorear(cola_x, cola_y)
@@ -212,9 +198,7 @@ class MyWindow(QtGui.QMainWindow) :
 		#si la nueva posicion de la cabeza estaba ocupada, la vibora que estaba ahi ahora esta muerta
 		if (cabeza_x, cabeza_y) in self.celdas_ocupadas:
 			id_muerto = self.celdas_ocupadas[(cabeza_x, cabeza_y)]
-			self.viboras[id_muerto].viva = False
-			self.borrar_vibora(id_muerto)
-			del self.viboras[id_muerto]
+			self.mata_serpiente(id_muerto)
 			if id_muerto == idn :
 				return
 		self.celdas_ocupadas[(cabeza_x, cabeza_y)] = str(idn)

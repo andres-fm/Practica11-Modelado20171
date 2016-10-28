@@ -64,12 +64,11 @@ class MyWindow(QtGui.QMainWindow):
 		self.estado_actual = self.proxy.estado_del_juego()
 		viboras = self.estado_actual["viboras"]
 		self.actualiza_viboras(viboras_anteriores, viboras)
+		if not self.sigo_vivo(viboras):
+			self.jugando = False
+			print("has perdido")
+			self.timer_actualizar_juego.stop()
 
-		"""if not self.sigo_vivo(viboras):
-									self.jugando = False
-									print("has perdido")
-									self.timer_actualizar_juego.stop()"""
-									
 		self.timer_actualizar_juego.setInterval(max(0,self.estado_actual["espera"]-50))
 		columnas = self.estado_actual["tamY"]
 		filas = self.estado_actual["tamX"]
